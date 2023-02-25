@@ -14,20 +14,29 @@ public class Main017_SiteSolution {
     public static void main(String[] args) {
         try (Scanner scanner = new Scanner(System.in)) {
             int n = scanner.nextInt();
-            int[][] sites = new int[n][2];
+            int maxSite = 0;
+            List<Integer[]> siteList = new ArrayList<>();
             for (int i = 0; i < n; i++) {
                 int start = scanner.nextInt();
                 int end = scanner.nextInt();
-                sites[i] = new int[]{Math.min(start, end), Math.max(start, end)};
+                // 计算最大站点
+                maxSite = Math.max(maxSite, Math.max(start, end));
+                // 线路是单程循环，需要考虑上车站点>下车站点如[3 2] 3->4->1->2, 可拆分为两人上下车
+                if (start > end) {
+                    siteList.add(new Integer[]{start, maxSite});
+                    siteList.add(new Integer[]{1, end});
+                } else {
+                    siteList.add(new Integer[]{start, end});
+                }
             }
-            solution(sites);
+            solution(siteList);
         }
     }
 
-    private static void solution(int[][] sites) {
+    private static void solution(List<Integer[]> sites) {
         Map<Integer, Integer> map = new HashMap<>();
-        for (int[] site : sites) {
-            for (int i = site[0]; i < site[1]; i++) {
+        for (Integer[] site : sites) {
+            for (int i = site[0]; i <= site[1]; i++) {
                 // 统计各个站点人数
                 map.put(i, map.getOrDefault(i, 0) + 1);
             }
